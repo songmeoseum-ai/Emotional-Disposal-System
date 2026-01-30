@@ -1,0 +1,434 @@
+:root{
+  --bg: #F5F3F0;
+  --text: #2B2520;
+  --muted: #8B8680;
+  --border: #D4CFC8;
+  --point: #4A4238;
+  --max-width: 520px;
+  --gap: 24px;
+  --transition: 220ms ease;
+  --weight-light: 300;
+  --weight-regular: 400;
+}
+
+* { box-sizing: border-box; }
+html,body { height:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family: "Pretendard", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-weight:var(--weight-regular);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.9;
+}
+
+.app{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:48px 20px;
+}
+
+/* Layout container */
+.header, .main, .footer {
+  width:100%;
+  max-width:var(--max-width);
+  margin: 0 auto;
+  text-align:center;
+}
+
+/* Header */
+.header h1{
+  margin:0;
+  font-size:20px;
+  font-weight:var(--weight-regular);
+  letter-spacing:0.02em;
+  color:var(--point);
+}
+.header .subtitle{
+  margin-top:10px;
+  margin-bottom:var(--gap);
+  font-size:13px;
+  color:var(--muted);
+  font-weight:var(--weight-light);
+}
+
+/* Panel */
+.panel{
+  display:block;
+  width:100%;
+  padding: 28px;
+  border-radius:6px;
+}
+
+/* Textarea */
+textarea{
+  width:100%;
+  min-height:220px;
+  resize:vertical;
+  padding:28px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text);
+  font-size:15px;
+  line-height:1.9;
+  border-radius:6px;
+  outline:none;
+  transition: opacity var(--transition), border-color var(--transition), background var(--transition);
+  font-weight:var(--weight-light);
+}
+textarea::placeholder{ color:var(--muted); font-weight:var(--weight-light); }
+textarea:focus{ border-color:var(--point); background:rgba(47,47,47,0.02); }
+
+/* Controls */
+.controls{
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  margin-top:20px;
+}
+.btn{
+  appearance:none;
+  -webkit-appearance:none;
+  padding:12px 20px;
+  border:1px solid var(--point);
+  background:transparent;
+  color:var(--point);
+  cursor:pointer;
+  font-weight:var(--weight-light);
+  letter-spacing:0.02em;
+  transition: background var(--transition), color var(--transition), opacity var(--transition);
+  border-radius:5px;
+  min-width:88px;
+}
+.btn:hover{ background: rgba(47,47,47,0.04); }
+.btn:disabled{ opacity:0.6; cursor:default; border-color:var(--border); color:var(--muted); pointer-events:none; }
+
+/* Footer */
+.footer{ margin-top:36px; text-align:center; color:var(--muted); font-size:12px; font-weight:var(--weight-light); }
+
+/* Processing overlay */
+.processing{
+  position: absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  pointer-events:none;
+  opacity:0;
+  transition: opacity var(--transition);
+  color:var(--point);
+  font-weight:var(--weight-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 20px;
+  border-radius:6px;
+  letter-spacing:0.04em;
+}
+
+/* Ephemeral message */
+.ephemeral-msg{
+  position: absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  pointer-events:none;
+  opacity:0;
+  transition: opacity var(--transition);
+  color:var(--point);
+  font-weight:var(--weight-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  border-radius:6px;
+  letter-spacing:0.04em;
+}
+
+.ephemeral-text{
+  margin:0;
+  font-size:16px;
+}
+
+/* When active */
+.app.processing-mode textarea{ opacity:0; pointer-events:none; }
+.app.processing-mode .btn{ opacity:0; pointer-events:none; }
+.app.processing-mode .processing{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* Ephemeral message active */
+.app.ephemeral-mode textarea{ opacity:0; pointer-events:none; }
+.app.ephemeral-mode .btn{ opacity:0; pointer-events:none; }
+.app.ephemeral-mode .ephemeral-msg{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* subtle glitch using pseudo layers (very slight) */
+.processing .proc-text{
+  position:relative;
+  display:inline-block;
+  transform-origin:center;
+}
+.processing .proc-text::before,
+.processing .proc-text::after{
+  content:attr(data-text);
+  position:absolute;
+  left:0; top:0;
+  width:100%;
+  height:100%;
+  clip-path: inset(0 0 0 0);
+  opacity:0;
+  transform:none;
+  pointer-events:none;
+}
+.app.processing-mode .processing .proc-text::before{
+  content: "Processing...";
+  opacity:0.06;
+  transform: translateX(-1px);
+}
+.app.processing-mode .processing .proc-text::after{
+  content: "Processing...";
+  opacity:0.04;
+  transform: translateX(1px);
+}
+
+/* micro fade out of textarea content when finishing */
+textarea.fade-out{ opacity:0; transition: opacity 260ms ease; }
+
+/* Trash animation - quick fade */
+textarea.trash-anim{
+  animation: trashFade 0.4s ease-out forwards;
+}
+
+@keyframes trashFade {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Shred animation - line shake and fall */
+textarea.shred-anim{
+  animation: shredEffect 0.8s ease-in forwards;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.02) 50%, transparent 100%);
+}
+
+@keyframes shredEffect {
+  0% { 
+    opacity: 1; 
+    transform: translateY(0) scaleY(1);
+  }
+  20% { transform: translateX(-2px) translateY(0); }
+  30% { transform: translateX(2px) translateY(0); }
+  40% { transform: translateX(-1px) translateY(0); }
+  50% { transform: translateX(1px) translateY(0); }
+  60% { 
+    opacity: 1; 
+    transform: translateY(4px) scaleY(0.95);
+    clip-path: inset(0 0 10% 0);
+  }
+  80% { 
+    opacity: 0.3; 
+    transform: translateY(20px) scaleY(0.8);
+    clip-path: inset(0 0 50% 0);
+  }
+  100% { 
+    opacity: 0; 
+    transform: translateY(40px) scaleY(0);
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+/* Shred glitch effect */
+.app.shred-glitch::before,
+.app.shred-glitch::after{
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  animation: glitchFlash 0.2s ease-out forwards;
+  z-index: 999;
+}
+
+.app.shred-glitch::before{
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(75, 66, 56, 0.1) 0px,
+    rgba(75, 66, 56, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  animation-delay: 0s;
+}
+
+.app.shred-glitch::after{
+  background: rgba(75, 66, 56, 0.05);
+  animation-delay: 0.05s;
+}
+
+@keyframes glitchFlash {
+  0% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/* Launch animation - float up and shrink */
+textarea.launch-anim{
+  animation: launchFloat 2s ease-in forwards;
+}
+
+@keyframes launchFloat {
+  0% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+  }
+  100% { 
+    opacity: 0; 
+    transform: translateY(-200px) scale(0.3);
+  }
+}
+
+@media (max-width:420px){
+  textarea{ min-height:180px; padding:20px; }
+  .btn{ min-width:68px; padding:10px 14px; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}  .btn{ min-width:68px; padding:10px 14px; }  textarea{ min-height:180px; padding:20px; }@media (max-width:420px){textarea.fade-out{ opacity:0; transition: opacity 260ms ease; }/* micro fade out of textarea content when finishing */}  transform: translateX(1px);  opacity:0.04;  content: "Processing...";.app.processing-mode .processing .proc-text::after{}  transform: translateX(-1px);  opacity:0.06;  content: "Processing...";.app.processing-mode .processing .proc-text::before{}  pointer-events:none;  transform:none;  opacity:0;  clip-path: inset(0 0 0 0);  height:100%;  width:100%;  left:0; top:0;  position:absolute;  content:attr(data-text);.processing .proc-text::after{.processing .proc-text::before,}  transform-origin:center;  display:inline-block;  position:relative;.processing .proc-text{/* subtle glitch using pseudo layers (very slight) */}  pointer-events:auto;  opacity:1;.app.processing-mode .processing{.app.processing-mode .btn{ opacity:0.6; pointer-events:none; }.app.processing-mode textarea{ opacity:0.36; transition: opacity var(--transition); }/* When active */}  letter-spacing:0.04em;  border-radius:6px;  padding:12px 20px;  justify-content:center;  align-items:center;  display:flex;  font-weight:var(--weight-light);  color:var(--point);  transition: opacity var(--transition);  opacity:0;  pointer-events:none;  transform: translate(-50%,-50%);  top:50%;  left:50%;  position: absolute;/* Processing overlay */
+.processing{/* Footer */
+.footer{ margin-top:36px; text-align:center; color:var(--muted); font-size:12px; font-weight:var(--weight-light); }.btn:disabled{ opacity:0.6; cursor:default; border-color:var(--border); color:var(--muted); pointer-events:none; }.btn:hover{ background: rgba(47,47,47,0.04); }}  min-width:88px;  border-radius:5px;  transition: background var(--transition), color var(--transition), opacity var(--transition);  letter-spacing:0.02em;  font-weight:var(--weight-light);  cursor:pointer;  color:var(--point);  background:transparent;  border:1px solid var(--point);  padding:12px 20px;  -webkit-appearance:none;  appearance:none;.btn{}  margin-top:20px;  justify-content:center;  gap:16px;  display:flex;.controls{/* Controls */textarea:focus{ border-color:var(--point); background:rgba(47,47,47,0.02); }textarea::placeholder{ color:var(--muted); font-weight:var(--weight-light); }}  font-weight:var(--weight-light);  transition: opacity var(--transition), border-color var(--transition), background var(--transition);  outline:none;  border-radius:6px;  line-height:1.9;  font-size:15px;  color:var(--text);  background:transparent;  border:1px solid var(--border);  padding:28px;  resize:vertical;  min-height:220px;  width:100%;textarea{/* Textarea */}  border-radius:6px;  padding: 28px;  width:100%;  display:block;.panel{/* Panel */}  font-weight:var(--weight-light);  color:var(--muted);  font-size:13px;  margin-bottom:var(--gap);  margin-top:10px;.header .subtitle{}  color:var(--point);  letter-spacing:0.02em;  font-weight:var(--weight-regular);  font-size:20px;  margin:0;,.header h1{

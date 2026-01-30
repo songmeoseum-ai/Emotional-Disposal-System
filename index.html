@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Emotional Disposal System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="header">
+      <h1>Emotional Disposal System</h1>
+      <p class="subtitle">We do not store your feelings.</p>
+    </header>
+
+    <main class="main" aria-live="polite">
+      <div class="panel">
+        <textarea id="input" placeholder="Enter text to discard." aria-label="Input to discard"></textarea>
+
+        <div class="controls" role="group" aria-label="Actions">
+          <button id="trash" class="btn" type="button" data-action="trash">Trash</button>
+          <button id="shred" class="btn" type="button" data-action="shred">Shred</button>
+          <button id="launch" class="btn" type="button" data-action="launch">Launch</button>
+        </div>
+      </div>
+
+      <div class="processing" id="processing" aria-hidden="true">
+        <span class="proc-text">Processing...</span>
+      </div>
+
+      <div class="ephemeral-msg" id="ephemeralMsg" aria-hidden="true">
+        <p class="ephemeral-text">기분은 휘발성입니다.</p>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <small>Feelings are ephemeral.</small>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
